@@ -11,7 +11,6 @@ namespace SAMM1
     public partial class MainForm : Form
     {
         private const string RANDOM_SERIES_NAME = "RandomSeries";
-        private const double INTERVAL = 0.25;
 
         public MainForm()
         {
@@ -29,8 +28,9 @@ namespace SAMM1
                 var random = GetRandom();
                 UpdateRandomInfo(random);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -76,15 +76,13 @@ namespace SAMM1
 
         private void UpdateChart(Series series, IList<double> numbers)
         {
-            var interval = decimal.ToDouble(intervalInput.Value);
-            var histogram = Histogram.BuildHistogram(numbers, interval);
+            var histogram = Histogram.BuildHistogram(numbers);
             if (histogram is null)
                 return;
-
             series.Points.Clear();
-            foreach (var pair in histogram)
+            for (int i = 0; i < histogram.Length; i++)
             {
-                series.Points.AddXY(pair.Value, Math.Round(pair.Key, 3));
+                series.Points.AddXY(i + 1, histogram[i]);
             }
             chart.ResetAutoValues();
         }
